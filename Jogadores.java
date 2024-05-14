@@ -25,12 +25,22 @@ public class Jogadores {
 
     public int getValorDaMaoDoJogador(){
         int soma = 0;
-        
+        int qtdUm = 0;
         for (int i = 0; i < this.maoDoJogador.size(); i++) {
-            soma += this.maoDoJogador.get(i);
+            if(this.maoDoJogador.get(i) > 10){
+                soma+=10;
+            }else{
+                soma += this.maoDoJogador.get(i);
+            }
+
+            if(this.maoDoJogador.get(i) == 1){
+                qtdUm++;
+            }
         }
-        if(this.maoDoJogador.contains(1) && soma <= 11){ //se tem Ás e seu valor total é 11 ou menos, o Ás vale 11
+        for(int i = 0; i < this.maoDoJogador.size(); i++){
+            if(this.maoDoJogador.get(i) == 1 && soma <= 11 && qtdUm == 1){ //se tem um Ás e seu valor total é 11 ou menos, o Ás vale 11
             soma += 10; //como já foi setado o 1 caso tenha ás, aqui seto apenas 10 assim completando o 11
+            }
         }
         return soma;
     }
