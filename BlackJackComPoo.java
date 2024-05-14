@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -32,22 +33,31 @@ public class BlackJackComPoo {
                 SC.nextLine(); // a primeira leitura não está funcionando, se tirar essa linha vai quebrar o
                                // codigo.
             }
+            
             System.out.print("Nome do jogador " + (i +1) + ": ");
-            jogadores[i].setNome(SC.nextLine()); // envia o nome digitado
-            comprarCarta(jogadores, i); // preenche a mão inicial com 2 cartas
-            comprarCarta(jogadores, i);
+            String nome = SC.nextLine();// envia o nome digitado
+            ArrayList<Integer> maoInicial = new ArrayList<>(); // cria a mão inicial
+            rodarMaoInicial(maoInicial); // preenche a mão inicial com 2 cartas
+            jogadores[i] = new Jogadores(nome, maoInicial);
         }
         // //#endregion 
 
         // #region loop infinito do jogo, compra de cartas até finalizar
         while (true) { 
+            if(quantidadeJogadores - jogadoresDesativados == 1){
+                
+            }
             for (int i = 0; i < jogadores.length; i++) { // roda o vetor para que todos jogadores possam jogar
                 if (jogadores[i].getMaoDoJogador().isEmpty()) { // verifica se o jogador estiver sem cartas(ou seja,
                                                                 // eliminado)
                     System.out.println(jogadores[i].getNome() + " está fora do jogo (sem cartas).");
                     continue; // passa para o próximo jogador
                 }
-
+                if(quantidadeJogadores - jogadoresDesativados == 1){
+                    System.out.println(COR_VERDE + jogadores[i].getNome() + " Ganhou!" + RESETAR_COR);
+                    System.out.println("Fim do jogo.");
+                    System.exit(0);
+                }
                 String compraString = null; // declarando variavel para usar no do{
                 boolean compra = false; // declarando variavel para usar no do{
                 int gambiarraDoDiabo = 1; // gambiarra pro loop do do{ funcionar de modo simples
@@ -89,7 +99,7 @@ public class BlackJackComPoo {
                         System.exit(0);
                     }else if(jogadores[i].getValorDaMaoDoJogador() > 21){ // verifica se a mão estorou
                         jogadores[i].perdeu();
-                        System.out.println(COR_VERMELHA + jogadores[i].getNome() + "estourou!" + RESETAR_COR);
+                        System.out.println(COR_VERMELHA + jogadores[i].getNome() + " estourou!" + RESETAR_COR);
                         jogadoresDesativados++;
                     }
                  } else {
@@ -105,11 +115,22 @@ public class BlackJackComPoo {
     public static void finalizarJogo(){
         // a fazer
     }
+    public static void rodarMaoInicial(ArrayList<Integer> maoInicial){
+        int carta = 0;
+        for (int i = 0; i < 2; i++) {
+            do{
+                carta = ROLL.nextInt(13) + 1;
+            }while(baralho[carta -1] == 0);
+            maoInicial.add(carta);
+            baralho[carta -1]--;
+        }
+    }
+
     public static void comprarCarta(Jogadores[] jogador, int i){
         int carta = ROLL.nextInt(13) + 1;
-        if (baralho[carta] > 0) {
-            jogador[i].addcarta(carta);;
-            baralho[carta]--;
+        if (baralho[carta -1] > 0) {
+            jogador[i].addcarta(carta);
+            baralho[carta -1]--;
         } else {
             comprarCarta(jogador, i);
         }
