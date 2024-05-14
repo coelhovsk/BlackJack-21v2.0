@@ -28,6 +28,10 @@ public class BlackJackComPoo {
         preencherBaralho(quantidadeJogadores); // preenche a variavel baralho
         Jogadores[] jogadores = new Jogadores[quantidadeJogadores]; // vetor de jogadores, utilizando objeto
         for (int i = 0; i < jogadores.length; i++) {
+            if (i == 0) {
+                SC.nextLine(); // a primeira leitura não está funcionando, se tirar essa linha vai quebrar o
+                               // codigo.
+            }
             System.out.print("Nome do jogador " + (i +1) + ": ");
             jogadores[i].setNome(SC.nextLine()); // envia o nome digitado
             comprarCarta(jogadores, i); // preenche a mão inicial com 2 cartas
