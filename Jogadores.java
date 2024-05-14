@@ -5,6 +5,10 @@ public class Jogadores {
     private ArrayList<Integer> maoDoJogador = new ArrayList<Integer>();
     
 
+    public Jogadores(String nome, ArrayList<Integer> maoDoJogador) {
+        this.setNome(nome);
+        this.setMaoInicial(maoDoJogador);
+    }
     public String getNome() {
         return this.nome;
     }
@@ -14,6 +18,9 @@ public class Jogadores {
 
     public ArrayList<Integer> getMaoDoJogador() {
         return this.maoDoJogador;
+    }
+    public void setMaoInicial(ArrayList<Integer> maoInicial) {
+        this.maoDoJogador = maoInicial;
     }
 
     public int getValorDaMaoDoJogador(){
