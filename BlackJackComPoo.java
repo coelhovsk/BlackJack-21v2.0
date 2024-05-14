@@ -23,7 +23,7 @@ public class BlackJackComPoo {
         System.out.println("-------------------------------");
         System.out.println("BLACKJACK --- 21");
 
-        // Solicita a quantidade de jogadores
+        // Solicita a quantidade de jogadores, preenche a mão e o baralho
         quantidadeJogadores = quantidadeJogadores(); // quantidade de jogadores
         preencherBaralho(quantidadeJogadores); // preenche a variavel baralho
         Jogadores[] jogadores = new Jogadores[quantidadeJogadores]; // vetor de jogadores, utilizando objeto
@@ -74,7 +74,7 @@ public class BlackJackComPoo {
                     System.out.println(jogadores[i].getNome() + " comprou a carta: " + jogadores[i].getCartaComprada());
                     System.out.println("Suas cartas atuais são: " + jogadores[i].getMaoDoJogador());
                      
-                    if(jogadores[i].getValorDaMaoDoJogador() == 21){
+                    if(jogadores[i].getValorDaMaoDoJogador() == 21){ // verifica se ganhou
                         if(jogadores[i].getMaoDoJogador().size() == 2){ // Verifica se o jogador fez BJ a partir do metodo verificarBlackJack
                             System.out.println(jogadores[i].getNome() + ", suas cartas iniciais são: " + jogadores[i].getMaoDoJogador());
                             System.out.println(COR_VERDE + jogadores[i].getNome() + " venceu com um Blackjack!" + RESETAR_COR);
@@ -83,8 +83,9 @@ public class BlackJackComPoo {
                         }
                         System.out.println("Fim do jogo.");
                         System.exit(0);
-                    }else if(jogadores[i].getValorDaMaoDoJogador() > 21){
+                    }else if(jogadores[i].getValorDaMaoDoJogador() > 21){ // verifica se a mão estorou
                         jogadores[i].perdeu();
+                        System.out.println(COR_VERMELHA + jogadores[i].getNome() + "estourou!" + RESETAR_COR);
                         jogadoresDesativados++;
                     }
                  } else {
