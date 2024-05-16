@@ -30,31 +30,27 @@ public class BlackJackComPoo {
         Jogadores[] jogadores = new Jogadores[quantidadeJogadores]; // vetor de jogadores, utilizando objeto
         for (int i = 0; i < jogadores.length; i++) {
             if (i == 0) {
-                SC.nextLine(); // a primeira leitura não está funcionando, se tirar essa linha vai quebrar o
-                               // codigo.
+                SC.nextLine(); // a primeira leitura não está funcionando, se tirar essa linha vai quebrar o codigo.
             }
-            
-            System.out.print("Nome do jogador " + (i +1) + ": ");
+
+            System.out.print("Nome do jogador " + (i + 1) + ": ");
             String nome = SC.nextLine();// envia o nome digitado
             ArrayList<Integer> maoInicial = new ArrayList<>(); // cria a mão inicial
             rodarMaoInicial(maoInicial); // preenche a mão inicial com 2 cartas
             jogadores[i] = new Jogadores(nome, maoInicial);
         }
-        // //#endregion 
+        // //#endregion
 
         // #region loop infinito do jogo, compra de cartas até finalizar
-        while (true) { 
-            if(quantidadeJogadores - jogadoresDesativados == 1){
-                
-            }
+        while (true) {
             for (int i = 0; i < jogadores.length; i++) { // roda o vetor para que todos jogadores possam jogar
-                if (jogadores[i].getMaoDoJogador().isEmpty()) { // verifica se o jogador estiver sem cartas(ou seja,
-                                                                // eliminado)
+                if (jogadores[i].getMaoDoJogador().isEmpty()) { // verifica se o jogador estiver sem cartas(ou seja,eliminado)
+                    System.out.println("-------------------------------");
                     System.out.println(jogadores[i].getNome() + " está fora do jogo (sem cartas).");
                     continue; // passa para o próximo jogador
                 }
-                if(quantidadeJogadores - jogadoresDesativados == 1){
-                    System.out.println(COR_VERDE + jogadores[i].getNome() + " Ganhou!" + RESETAR_COR);
+                if (quantidadeJogadores - jogadoresDesativados == 1) {
+                    System.out.println(COR_VERDE + jogadores[i].getNome() + " ganhou!" + RESETAR_COR);
                     System.out.println("Fim do jogo.");
                     System.exit(0);
                 }
@@ -65,7 +61,12 @@ public class BlackJackComPoo {
                 // #region PERGUNTA DESEJA COMPRAR
                 do { // criado sem um else pois isso gastaria mais "memória"
                     System.out.println("-------------------------------");
-                    System.out.println(jogadores[i].getNome() + ", suas cartas atuais são: " + jogadores[i].getMaoDoJogador()); // mostra cartas atuais
+                    System.out.println(jogadores[i].getNome() + ", suas cartas atuais são: " + jogadores[i].getMaoDoJogador()); // mostra as cartas atuais
+                    if (jogadores[i].getValorDaMaoDoJogador() == 21 && jogadores[i].getMaoDoJogador().size() == 2) { // verifica se deu BJ
+                        System.out.println(COR_VERDE + jogadores[i].getNome() + " venceu com um Blackjack!" + RESETAR_COR);
+                        System.out.println("Fim do jogo.");
+                        System.exit(0);
+                    }
                     System.out.println(jogadores[i].getNome() + ", deseja comprar?");
                     System.out.println("-------------------------------");
                     compraString = SC.next().toUpperCase();
@@ -73,8 +74,7 @@ public class BlackJackComPoo {
                             && compraString.length() <= 3) {
                         compra = true;// caso a palavra se assemelhe com sim ou yes
                         gambiarraDoDiabo = 1;
-                    } else if ((compraString.charAt(0) != 'N' && compraString.length() <= 3)
-                            || compraString.length() > 3) {
+                    } else if ((compraString.charAt(0) != 'N' && compraString.length() <= 3) || compraString.length() > 3) {
                         System.out.println(COR_VERMELHA + "Apenas diga sim ou não" + RESETAR_COR);
                         gambiarraDoDiabo = 0; // caso a palavra não se assemelhe com nada
                     }
@@ -87,50 +87,76 @@ public class BlackJackComPoo {
                     comprarCarta(jogadores, i);
                     System.out.println(jogadores[i].getNome() + " comprou a carta: " + jogadores[i].getCartaComprada());
                     System.out.println("Suas cartas atuais são: " + jogadores[i].getMaoDoJogador());
-                     
-                    if(jogadores[i].getValorDaMaoDoJogador() == 21){ // verifica se ganhou
-                        if(jogadores[i].getMaoDoJogador().size() == 2){ // Verifica se o jogador fez BJ a partir do metodo verificarBlackJack
-                            System.out.println(jogadores[i].getNome() + ", suas cartas iniciais são: " + jogadores[i].getMaoDoJogador());
-                            System.out.println(COR_VERDE + jogadores[i].getNome() + " venceu com um Blackjack!" + RESETAR_COR);
-                        } else { // caso não tenha feito printa uma mensagem de venceu normal.
-                            System.out.println(COR_VERDE + jogadores[i].getNome() + " venceu!" + RESETAR_COR);
-                        }
+
+                    if (jogadores[i].getValorDaMaoDoJogador() == 21) { // verifica se ganhou
+                        System.out.println(COR_VERDE + jogadores[i].getNome() + " venceu!" + RESETAR_COR);
                         System.out.println("Fim do jogo.");
                         System.exit(0);
-                    }else if(jogadores[i].getValorDaMaoDoJogador() > 21){ // verifica se a mão estorou
+                    } else if (jogadores[i].getValorDaMaoDoJogador() > 21) { // verifica se a mão estorou
                         jogadores[i].perdeu();
                         System.out.println(COR_VERMELHA + jogadores[i].getNome() + " estourou!" + RESETAR_COR);
                         jogadoresDesativados++;
                     }
-                 } else {
-                     qtdJogadoresPassaram++;
-                     if(qtdJogadoresPassaram == (quantidadeJogadores-jogadoresDesativados)){
-                         finalizarJogo();
+                } else { //se não comprou
+                    qtdJogadoresPassaram++; // a qtd de qm não comprou aumenta
+                    if (qtdJogadoresPassaram == (quantidadeJogadores - jogadoresDesativados)) { // se todos passaram
+                        finalizarJogo(jogadores); // o jogo finaliza, vendo quem ganha ou se empata
                     }
                 }
             }
         }
+        // #endregion
     }
 
-    public static void finalizarJogo(){
-        // a fazer
+    public static void finalizarJogo(Jogadores jogador[]) {
+        ArrayList<String> ganhadores = new ArrayList<String>(); // arraylist pois não sei quantos jogadores irão ganhar
+        int maior = jogador[0].getValorDaMaoDoJogador(); // maior valor da mesa
+        for (int i = 1; i < jogador.length; i++) { // rodo for para ver qual é o maior
+            if (jogador[i].getValorDaMaoDoJogador() > maior) {
+                maior = jogador[i].getValorDaMaoDoJogador();
+            }
+        }
+
+        for (int i = 0; i < jogador.length; i++) { // rodo for para ver se a pessoa teve o maior valor da mesa
+            if (jogador[i].getValorDaMaoDoJogador() == maior) {
+                ganhadores.add(jogador[i].getNome()); // se teve ela entra no arraylist ganhadores
+            }
+        }
+
+        if (ganhadores.size() == 1) { // se houver somente um ganhador
+            System.out.print(COR_VERDE + ganhadores.get(0) + " venceu!" + RESETAR_COR);
+            
+        } else { // se emparam
+            for (int i = 0; i < ganhadores.size(); i++) {
+                if (i == ganhadores.size() - 1) {
+                    System.out.print(ganhadores.get(i));
+                } else {
+                    System.out.print(COR_AMARELA + ganhadores.get(i) + " e ");
+                }
+
+            }
+            System.out.println(" empataram!" + RESETAR_COR);
+        }
+        System.out.println("Fim do jogo.");
+        System.exit(0);
     }
-    public static void rodarMaoInicial(ArrayList<Integer> maoInicial){
+
+    public static void rodarMaoInicial(ArrayList<Integer> maoInicial) {
         int carta = 0;
         for (int i = 0; i < 2; i++) {
-            do{
+            do {
                 carta = ROLL.nextInt(13) + 1;
-            }while(baralho[carta -1] == 0);
+            } while (baralho[carta - 1] == 0);
             maoInicial.add(carta);
-            baralho[carta -1]--;
+            baralho[carta - 1]--;
         }
     }
 
-    public static void comprarCarta(Jogadores[] jogador, int i){
+    public static void comprarCarta(Jogadores[] jogador, int i) {
         int carta = ROLL.nextInt(13) + 1;
-        if (baralho[carta -1] > 0) {
+        if (baralho[carta - 1] > 0) {
             jogador[i].addcarta(carta);
-            baralho[carta -1]--;
+            baralho[carta - 1]--;
         } else {
             comprarCarta(jogador, i);
         }
@@ -164,10 +190,10 @@ public class BlackJackComPoo {
     }
     // #endregion
 
-    public static int[] preencherBaralho(int n){
-        if(n > 4){ //verifico se a qtd de jogadores é maior que 4
+    public static int[] preencherBaralho(int n) {
+        if (n > 4) { // verifico se a qtd de jogadores é maior que 4
             n = 8; // se for se torna 2 baralhos, apenas reutilizei a variavel
-        }else{
+        } else {
             n = 4; // se não for é um baralho só
         }
         for (int i = 0; i < baralho.length; i++) {
